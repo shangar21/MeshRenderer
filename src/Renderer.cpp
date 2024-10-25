@@ -16,10 +16,12 @@ void Renderer::renderRayTrace(const Camera &camera, const Mesh &mesh,
       float u = (x - camera.imageWidth / 2.0f) * du[0];
       float v = (y - camera.imageHeight / 2.0f) * dv[1];
 
-      Eigen::Vector3f rayDirCamera (u, v, -camera.fl);
-			rayDirCamera.normalize();
-			Eigen::Vector4f rayDirCameraHomo(rayDirCamera.x(), rayDirCamera.y(), rayDirCamera.z(), 0.0f);
-			Eigen::Vector3f rayDirWorld = (camera.getC2W() * rayDirCameraHomo).head<3>().normalized();
+      Eigen::Vector3f rayDirCamera(u, v, -camera.fl);
+      rayDirCamera.normalize();
+      Eigen::Vector4f rayDirCameraHomo(rayDirCamera.x(), rayDirCamera.y(),
+                                       rayDirCamera.z(), 0.0f);
+      Eigen::Vector3f rayDirWorld =
+          (camera.getC2W() * rayDirCameraHomo).head<3>().normalized();
 
       Ray ray(camera.eye, rayDirWorld);
 
