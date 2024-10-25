@@ -4,9 +4,9 @@
 
 int main() {
   // Create a Camera
-  Camera camera(Eigen::Vector3f(0.0f, 0.0f, 0.0f), // Camera position
+  Camera camera(Eigen::Vector3f(0.0f, 0.0f, 0.0f),   // Camera position
                 Eigen::Vector3f(10.0f, 10.0f, 0.0f), // Target point
-                Eigen::Vector3f(0.0f, 1.0f, 0.0f), // Up vector
+                Eigen::Vector3f(0.0f, 1.0f, 0.0f),   // Up vector
                 2.0f, 800, 600);
   Mesh mesh;
   bool loaded = mesh.loadFromObj("/home/shangar21/Documents/MeshRenderer/"
@@ -23,6 +23,6 @@ int main() {
 
   // Render the scene
   renderer.renderRayTrace(camera, mesh, R, G, B);
-	renderer.saveAsPNG(R, G, B, "/home/shangar21/mesh_render.png");
+  renderer.saveAsPNG(R, G, B, "/home/shangar21/mesh_render.png");
   return 0;
 }

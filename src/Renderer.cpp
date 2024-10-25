@@ -52,8 +52,8 @@ void Renderer::saveAsPNG(const Eigen::MatrixXf &R, const Eigen::MatrixXf &G,
           std::min(255.0f, std::max(0.0f, G(y, x) * 255.0f))); // Green
       image.at<cv::Vec3b>(y, x)[2] = static_cast<unsigned char>(
           std::min(255.0f, std::max(0.0f, R(y, x) * 255.0f))); // Red
-  	}
+    }
   }
 
-	cv::imwrite(filename, image);
+  cv::imwrite(filename, image);
 }
