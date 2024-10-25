@@ -2,12 +2,12 @@
 
 #define FP_TOLERANCE 1e-6
 
+#include "Hit.h"
+#include "Ray.h"
 #include <Eigen/Dense>
 #include <iostream>
 #include <string>
 #include <vector>
-#include "Ray.h"
-#include "Hit.h"
 
 class Mesh {
 public:
@@ -23,5 +23,5 @@ public:
 
   bool loadFromObj(const std::string &filename);
   void printMeshInfo() const;
-	Hit intersect(const Ray& ray) const;
+  Hit intersect(const Ray &ray) const;
 };
