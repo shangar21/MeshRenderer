@@ -1,0 +1,3 @@
+/home/shangar21/Documents/MeshRenderer/build/CMakeFiles/MeshRenderer.dir
+/home/shangar21/Documents/MeshRenderer/build/CMakeFiles/edit_cache.dir
+/home/shangar21/Documents/MeshRenderer/build/CMakeFiles/rebuild_cache.dir
