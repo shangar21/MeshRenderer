@@ -99,6 +99,7 @@ Hit Mesh::intersect(const Ray &ray) const {
   Hit closestHit;
   closestHit.lambda = std::numeric_limits<float>::max();
 
+#pragma omp parallel for
   for (int i = 0; i < faces.size(); i++) {
     const Eigen::Vector3i &face = faces[i];
 
@@ -142,9 +143,10 @@ Hit Mesh::intersect(const Ray &ray) const {
       closestHit.point = ray.pointAt(lambda);
       closestHit.normal = edge1.cross(edge2).normalized();
       // Need to set colour to something else later
-      //closestHit.colour =
+      // closestHit.colour =
       //    Eigen::Vector3f(1.0f, 1.0f, 1.0f); // White color for now
-			closestHit.colour = (closestHit.normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f)) / 2.0f;
+      closestHit.colour =
+          (closestHit.normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f)) / 2.0f;
     }
   }
 
