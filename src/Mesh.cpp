@@ -142,8 +142,9 @@ Hit Mesh::intersect(const Ray &ray) const {
       closestHit.point = ray.pointAt(lambda);
       closestHit.normal = edge1.cross(edge2).normalized();
       // Need to set colour to something else later
-      closestHit.colour =
-          Eigen::Vector3f(1.0f, 1.0f, 1.0f); // White color for now
+      //closestHit.colour =
+      //    Eigen::Vector3f(1.0f, 1.0f, 1.0f); // White color for now
+			closestHit.colour = (closestHit.normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f)) / 2.0f;
     }
   }
 
