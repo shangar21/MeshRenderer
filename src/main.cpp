@@ -4,13 +4,12 @@
 
 int main() {
   // Create a Camera
-  Camera camera(Eigen::Vector3f(0.0f, 0.0f, 0.0f),   // Camera position
-                Eigen::Vector3f(10.0f, 10.0f, 0.0f), // Target point
+  Camera camera(Eigen::Vector3f(0.0f, 0.0f, 1.0f),   // Camera position
+                Eigen::Vector3f(0.0f, 0.0f, 0.0f), // Target point
                 Eigen::Vector3f(0.0f, 1.0f, 0.0f),   // Up vector
-                2.0f, 800, 600);
+                1.0f, 800, 600);
   Mesh mesh;
-  bool loaded = mesh.loadFromObj("/home/shangar21/Documents/MeshRenderer/"
-                                 "submodules/tinyobjloader/models/cube.obj");
+  bool loaded = mesh.loadFromObj("/home/shangar21/Downloads/teapot.obj");
   mesh.printMeshInfo();
 
   // Create R, G, B matrices to store the image colors

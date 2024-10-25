@@ -101,8 +101,6 @@ Hit Mesh::intersect(const Ray &ray) const {
 
   for (int i = 0; i < faces.size(); i++) {
     const Eigen::Vector3i &face = faces[i];
-    const Eigen::Vector3i &faceNormal = faceNormals[i];
-    const Eigen::Vector3i &faceTexCoords = faceTexture[i];
 
     Eigen::Vector3f a = vertices.row(face[0]);
     Eigen::Vector3f b = vertices.row(face[1]);
@@ -110,35 +108,42 @@ Hit Mesh::intersect(const Ray &ray) const {
 
     Eigen::Vector3f edge1 = b - a;
     Eigen::Vector3f edge2 = c - a;
-    Eigen::Vector3f rayCrossEdge2 = ray.direction.cross(edge2);
-    float det = edge1.dot(rayCrossEdge2);
 
-    if (fabs(det) < FP_TOLERANCE)
+    Eigen::Vector3f h = ray.direction.cross(edge2);
+    float det = edge1.dot(h);
+
+    if (fabs(det) < FP_TOLERANCE) {
       continue;
+    }
 
-    float invDet = 1.0 / det;
+    float invDet = 1.0f / det;
 
     Eigen::Vector3f s = ray.origin - a;
 
-    float u = invDet * s.dot(rayCrossEdge2);
+    float u = invDet * s.dot(h);
+    if (u < 0.0f || u > 1.0f) {
+      continue; // The intersection point is outside the triangle
+    }
 
-    if (u < 0 || u > 1)
-      continue;
+    Eigen::Vector3f q = s.cross(edge1);
+    float v = invDet * ray.direction.dot(q);
+    if (v < 0.0f || (u + v) > 1.0f) {
+      continue; // The intersection point is outside the triangle
+    }
 
-    Eigen::Vector3f sCrossEdge1 = s.cross(edge1);
-    float v = invDet * ray.direction.dot(sCrossEdge1);
+    float lambda = invDet * edge2.dot(q);
+    if (lambda < FP_TOLERANCE) {
+      continue; // Ignore intersections behind the ray's origin
+    }
 
-    if (v < 0 || v > 1)
-      continue;
-
-    float lambda = invDet * edge2.dot(sCrossEdge1);
-
-    if (lambda > FP_TOLERANCE && lambda < closestHit.lambda) {
+    if (lambda < closestHit.lambda) {
       closestHit.hit = true;
       closestHit.lambda = lambda;
       closestHit.point = ray.pointAt(lambda);
       closestHit.normal = edge1.cross(edge2).normalized();
-      closestHit.colour = Eigen::Vector3f(1.0f, 1.0f, 1.0f);
+      // Need to set colour to something else later
+      closestHit.colour =
+          Eigen::Vector3f(1.0f, 1.0f, 1.0f); // White color for now
     }
   }
 
