@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include <omp.h>
 
 void Renderer::renderRayTrace(const Camera &camera, const Mesh &mesh,
                               Eigen::MatrixXf &R, Eigen::MatrixXf &G,
@@ -9,6 +10,7 @@ void Renderer::renderRayTrace(const Camera &camera, const Mesh &mesh,
   Eigen::Vector3f du = Eigen::Vector3f(vw / camera.imageWidth, 0.0f, 0.0f);
   Eigen::Vector3f dv = Eigen::Vector3f(0.0f, vh / camera.imageHeight, 0.0f);
 
+#pragma omp parallel for
   for (int y = 0; y < camera.imageHeight; y++) {
     for (int x = 0; x < camera.imageWidth; x++) {
       float u = (x - camera.imageWidth / 2.0f) * du[0];
@@ -25,7 +27,6 @@ void Renderer::renderRayTrace(const Camera &camera, const Mesh &mesh,
         R(y, x) = hit.colour.x();
         G(y, x) = hit.colour.y();
         B(y, x) = hit.colour.z();
-				std::cout<<"HIT!"<<std::endl;
       } else {
         R(y, x) = 0.0f;
         G(y, x) = 0.0f;

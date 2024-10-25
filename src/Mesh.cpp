@@ -113,7 +113,7 @@ Hit Mesh::intersect(const Ray &ray) const {
     Eigen::Vector3f rayCrossEdge2 = ray.direction.cross(edge2);
     float det = edge1.dot(rayCrossEdge2);
 
-    if (fabs(det) > FP_TOLERANCE)
+    if (fabs(det) < FP_TOLERANCE)
       continue;
 
     float invDet = 1.0 / det;
