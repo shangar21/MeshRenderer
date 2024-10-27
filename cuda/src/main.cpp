@@ -7,11 +7,22 @@
 #include <cuda_runtime.h>
 #include "renderer.cuh"
 
+
+// Helper function to parse a vertex index in the form v/vt/vn
+int parseVertexIndex(const std::string& token) {
+    size_t pos = token.find('/');
+    if (pos != std::string::npos) {
+        return std::stoi(token.substr(0, pos)) - 1;  // Only parse the vertex index, convert to 0-based
+    } else {
+        return std::stoi(token) - 1;  // If there are no slashes, just parse the integer
+    }
+}
+
 // Function to load mesh data from a simple .obj file format
 bool loadMeshFromFile(const std::string& filename, mesh& d_mesh) {
     std::vector<float3> h_vertices;
     std::vector<int3> h_faces;
-    
+
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: Could not open file " << filename << std::endl;
@@ -28,9 +39,14 @@ bool loadMeshFromFile(const std::string& filename, mesh& d_mesh) {
             iss >> x >> y >> z;
             h_vertices.push_back(make_float3(x, y, z));
         } else if (type == "f") {
-            int v0, v1, v2;
-            iss >> v0 >> v1 >> v2;
-            h_faces.push_back(make_int3(v0 - 1, v1 - 1, v2 - 1));  // Adjust for 0-based indexing
+            std::string vertex1, vertex2, vertex3;
+            iss >> vertex1 >> vertex2 >> vertex3;
+            int v0 = parseVertexIndex(vertex1);
+            int v1 = parseVertexIndex(vertex2);
+            int v2 = parseVertexIndex(vertex3);
+
+            std::cout << "Face: " << v0 << " " << v1 << " " << v2 << "\n";
+            h_faces.push_back(make_int3(v0, v1, v2));  // Store 0-based indices for vertices
         }
     }
 
@@ -39,6 +55,8 @@ bool loadMeshFromFile(const std::string& filename, mesh& d_mesh) {
     d_mesh.num_vertices = h_vertices.size();
     d_mesh.num_faces = h_faces.size();
 
+    std::cout << "Mesh has " << d_mesh.num_vertices << " vertices\n";
+    std::cout << "Mesh has " << d_mesh.num_faces << " faces\n";
 
     // Allocate device memory and copy vertices
     cudaMalloc(&d_mesh.vertices, d_mesh.num_vertices * sizeof(float3));
@@ -94,7 +112,7 @@ int main(int argc, char* argv[]) {
 
     // Set up the camera
     camera cam;
-    cam.eye = make_float3(0.0f, 0.0f, 5.0f);
+    cam.eye = make_float3(0.0f, 0.0f, 1.0f);
     cam.target = make_float3(0.0f, 0.0f, 0.0f);
     cam.up = make_float3(0.0f, 1.0f, 0.0f);
     cam.fl = 1.0f;

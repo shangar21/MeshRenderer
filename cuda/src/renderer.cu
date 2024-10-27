@@ -1,27 +1,31 @@
 #include "renderer.cuh"
 #include <stdio.h>
+#include <cstdio>
+#include <cmath>
 
 __global__ void render_ray_trace(camera cam, mesh m, float *r, float *g,
                                  float *b, float vh, float vw, float3 du,
                                  float3 dv) {
   int x = blockIdx.x * blockDim.x + threadIdx.x;
-  int y = blockIdx.x * blockDim.y + threadIdx.y;
+  int y = blockIdx.y * blockDim.y + threadIdx.y;
 
   if (x >= cam.image_width || y >= cam.image_height)
     return;
 
-  float u = (x - cam.image_width / 2.0f) * du.x;
-  float v = (y - cam.image_height / 2.0f) * dv.y;
+  // Calculate normalized camera-space ray direction
+  float u_offset = (x - cam.image_width / 2.0f) * du.x;
+  float v_offset = (y - cam.image_height / 2.0f) * dv.y;
 
-  float3 ray_dir_cam = normalize(make_float3(u, v, -cam.fl));
+  float3 ray_dir_cam = normalize(make_float3(u_offset, v_offset, -cam.fl));
   float4 ray_dir_cam_homo =
       make_float4(ray_dir_cam.x, ray_dir_cam.y, ray_dir_cam.z, 0.0f);
-  float c2w[16];
 
+  // Create camera-to-world (C2W) matrix
   float3 w_c = normalize(cam.target - cam.eye);
   float3 u_c = normalize(cross(cam.up, w_c));
   float3 v_c = cross(w_c, u_c);
 
+  float c2w[16];
   c2w[0] = u_c.x;
   c2w[1] = u_c.y;
   c2w[2] = u_c.z;
@@ -45,8 +49,7 @@ __global__ void render_ray_trace(camera cam, mesh m, float *r, float *g,
 
   ray ray_obj = {.origin = cam.eye, .direction = ray_dir_world};
 
-  //  hit hit_data = intersect(m, ray_obj);
-
+  // Initialize closest hit data
   hit closest_hit = {.hit = 0,
                      .point = make_float3(0.0f, 0.0f, 0.0f),
                      .normal = make_float3(0.0f, 0.0f, 0.0f),
@@ -54,7 +57,6 @@ __global__ void render_ray_trace(camera cam, mesh m, float *r, float *g,
                      .colour = make_float3(0.0f, 0.0f, 0.0f)};
 
   for (int i = 0; i < m.num_faces; i++) {
-		printf("Checking face %d\n", i);
     int3 vector_indices = m.faces[i];
     float3 a = m.vertices[vector_indices.x];
     float3 b = m.vertices[vector_indices.y];
@@ -66,32 +68,25 @@ __global__ void render_ray_trace(camera cam, mesh m, float *r, float *g,
     float3 h = cross(ray_obj.direction, edge2);
     float det = dot(edge1, h);
 
-    if (fabs(det) < FP_TOLERANCE)
-      continue;
+    if (fabs(det) < FP_TOLERANCE) continue;
 
     float inv_det = 1.0f / det;
     float3 s = ray_obj.origin - a;
 
-    float u = inv_det * dot(s, h);
-    if (u < 0.0f || u > 1.0f)
-      continue;
+    float u_bary = inv_det * dot(s, h);
+    if (u_bary < 0.0f || u_bary > 1.0f) continue;
 
     float3 q = cross(s, edge1);
-    float v = inv_det * dot(ray_obj.direction, q);
-    if (v < 0.0f || u + v > 1.0f)
-      continue;
+    float v_bary = inv_det * dot(ray_obj.direction, q);
+    if (v_bary < 0.0f || u_bary + v_bary > 1.0f) continue;
 
     float lambda = inv_det * dot(edge2, q);
-    if (lambda < FP_TOLERANCE)
-      continue;
+    if (lambda < FP_TOLERANCE) continue;
 
     if (lambda < closest_hit.lambda) {
       closest_hit.hit = 1;
       closest_hit.lambda = lambda;
-      closest_hit.point =
-          make_float3(ray_obj.origin.x + lambda * ray_obj.direction.x,
-                      ray_obj.origin.y + lambda * ray_obj.direction.y,
-                      ray_obj.origin.z + lambda * ray_obj.direction.z);
+      closest_hit.point = ray_obj.origin + lambda * ray_obj.direction;
       closest_hit.normal = normalize(cross(edge1, edge2));
       closest_hit.colour = make_float3((closest_hit.normal.x + 1) / 2,
                                        (closest_hit.normal.y + 1) / 2,
@@ -102,7 +97,7 @@ __global__ void render_ray_trace(camera cam, mesh m, float *r, float *g,
   int pixel_index = y * cam.image_width + x;
 
   if (closest_hit.hit) {
-		printf("Hit!\n");
+    printf("Hit detected at pixel (%d, %d)\n", x, y);
     r[pixel_index] = closest_hit.colour.x;
     g[pixel_index] = closest_hit.colour.y;
     b[pixel_index] = closest_hit.colour.z;
