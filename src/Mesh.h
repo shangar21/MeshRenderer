@@ -4,10 +4,12 @@
 
 #include "Hit.h"
 #include "Ray.h"
+#include "../cuda/src/renderer.cuh"
 #include <Eigen/Dense>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cuda_runtime.h>
 
 class Mesh {
 public:
@@ -24,4 +26,5 @@ public:
   bool loadFromObj(const std::string &filename);
   void printMeshInfo() const;
   Hit intersect(const Ray &ray) const;
+	void renderWithCuda(const camera& cam);
 };
