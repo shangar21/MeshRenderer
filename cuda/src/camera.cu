@@ -1,6 +1,6 @@
 #include "camera.cuh"
 
-__host__ __device__ void getC2W(const camera& cam, float* c2w){
+__device__ void getC2W(const camera& cam, float* c2w){
 	float3 w = normalize(cam.target - cam.eye);
 	float3 u = normalize(cross(cam.up, w));
 	float3 v = cross(w, u);
@@ -12,7 +12,7 @@ __host__ __device__ void getC2W(const camera& cam, float* c2w){
 	
 }
 
-__host__ __device__ void getW2C(const camera& cam, float* c2w){
+__device__ void getW2C(const camera& cam, float* w2c){
 	float3 w = normalize(cam.target - cam.eye);
 	float3 u = normalize(cross(cam.up, w));
 	float3 v = cross(w, u);

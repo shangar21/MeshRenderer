@@ -4,6 +4,8 @@
 #include "hit.cuh"
 #include "ray.cuh"
 
+#define FP_TOLERANCE 1e-6
+
 struct mesh {
 	int num_faces;
 	int num_vertices;
@@ -18,4 +20,4 @@ struct mesh {
 	int3* face_texture;
 };
 
-__host__ __device__ hit intersect(mesh m, ray r);
+__device__ hit intersect(mesh m, ray r);

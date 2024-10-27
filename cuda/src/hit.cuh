@@ -8,4 +8,4 @@ struct hit {
 	float3 colour;
 };
 
-__host__ __device__ hit init_hit();
+__device__ hit init_hit();

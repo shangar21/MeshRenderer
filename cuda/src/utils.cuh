@@ -37,16 +37,21 @@
  */
 
 #pragma once
+#ifndef HELPER_MATH_H
+#define HELPER_MATH_H
 
 #include "cuda_runtime.h"
-#include <Eigen/Dense>
 
 typedef unsigned int uint;
 typedef unsigned short ushort;
 
+#ifndef EXIT_WAIVED
+#define EXIT_WAIVED 2
+#endif
+
+#ifndef __CUDACC__
 #include <math.h>
 
-#define FP_TOLERANCE 1e-6
 ////////////////////////////////////////////////////////////////////////////////
 // host implementations of CUDA functions
 ////////////////////////////////////////////////////////////////////////////////
@@ -1464,7 +1469,7 @@ inline __device__ __host__ float4 smoothstep(float4 a, float4 b, float4 x)
 
 // Matrix Ops (simple)
 
-__host__ __device__ float4 matMul4x4(const float* mat, const float4& vec) {
+__host__ __device__ inline float4 matMul4x4(const float* mat, const float4& vec) {
     return make_float4(
         mat[0] * vec.x + mat[1] * vec.y + mat[2] * vec.z + mat[3] * vec.w,
         mat[4] * vec.x + mat[5] * vec.y + mat[6] * vec.z + mat[7] * vec.w,
@@ -1472,3 +1477,5 @@ __host__ __device__ float4 matMul4x4(const float* mat, const float4& vec) {
         mat[12] * vec.x + mat[13] * vec.y + mat[14] * vec.z + mat[15] * vec.w
     );
 }
+
+#endif

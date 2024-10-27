@@ -1,6 +1,6 @@
 #include "mesh.cuh"
 
-__host__ __device__ hit intersect(mesh m, ray r) {
+__device__ hit intersect(mesh m, ray r) {
     hit closest_hit = init_hit();
 
     for (int i = 0; i < m.num_faces; i++) {
@@ -31,7 +31,7 @@ __host__ __device__ hit intersect(mesh m, ray r) {
         if (lambda < FP_TOLERANCE) continue;
 
         if (lambda < closest_hit.lambda) {
-            closest_hit.hitOccurred = true;
+            closest_hit.hit = 1;
             closest_hit.lambda = lambda;
             closest_hit.point = point_at(r, lambda);
             closest_hit.normal = normalize(cross(edge1, edge2));
