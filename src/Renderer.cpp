@@ -1,7 +1,7 @@
 #include "Renderer.h"
 #include <omp.h>
 
-void Renderer::renderRayTrace(const Camera &camera, const Mesh &mesh,
+void Renderer::renderRayTrace(const Camera &camera, const BVH &bvh,
                               Eigen::MatrixXf &R, Eigen::MatrixXf &G,
                               Eigen::MatrixXf &B) {
   float vh = 2.0f * camera.fl;
@@ -25,7 +25,8 @@ void Renderer::renderRayTrace(const Camera &camera, const Mesh &mesh,
 
       Ray ray(camera.eye, rayDirWorld);
 
-      Hit hit = mesh.intersect(ray);
+      Hit hit;
+			bvh.intersect(ray, hit);
 
       if (hit.hit) {
         R(y, x) = hit.colour.x();
