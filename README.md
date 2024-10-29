@@ -10,7 +10,7 @@ A simple ray tracing (rasterizing in the future) application that loads and rend
 ## TODO
 1. Read Textures
 2. Radiance model
-3. Bump Mapping
+3. BVH
 4. Animation
 5. Rasterization
 6. CUDA
