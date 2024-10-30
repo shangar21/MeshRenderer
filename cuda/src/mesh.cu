@@ -1,7 +1,14 @@
 #include "mesh.cuh"
 
 __device__ hit intersect(mesh m, ray r) {
-    hit closest_hit = init_hit();
+
+  // Initialize closest hit data
+  hit closest_hit = {.hit = 0,
+                     .point = make_float3(0.0f, 0.0f, 0.0f),
+                     .normal = make_float3(0.0f, 0.0f, 0.0f),
+                     .lambda = INFINITY,
+                     .colour = make_float3(0.0f, 0.0f, 0.0f)};
+
 
     for (int i = 0; i < m.num_faces; i++) {
         int3 vector_indices = m.faces[i];
@@ -33,7 +40,7 @@ __device__ hit intersect(mesh m, ray r) {
         if (lambda < closest_hit.lambda) {
             closest_hit.hit = 1;
             closest_hit.lambda = lambda;
-            closest_hit.point = point_at(r, lambda);
+      			closest_hit.point = r.origin + lambda * r.direction;
             closest_hit.normal = normalize(cross(edge1, edge2));
             closest_hit.colour = make_float3(
                 (closest_hit.normal.x + 1) / 2,

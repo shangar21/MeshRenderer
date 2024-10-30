@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "Renderer.h"
+#include "BVH.h"
 
 int main(int argc, char *argv[]) {
 
@@ -22,13 +23,17 @@ int main(int argc, char *argv[]) {
   bool loaded = mesh.loadFromObj(objPath);
   mesh.printMeshInfo();
 
+	BVH bvh;
+	bvh.buildFromMesh(mesh);
+
   Eigen::MatrixXf R(camera.imageHeight, camera.imageWidth);
   Eigen::MatrixXf G(camera.imageHeight, camera.imageWidth);
   Eigen::MatrixXf B(camera.imageHeight, camera.imageWidth);
 
   Renderer renderer;
 
-  renderer.renderRayTrace(camera, mesh, R, G, B);
+  renderer.renderRayTrace(camera, bvh, R, G, B);
   renderer.saveAsPNG(R, G, B, outPath);
   return 0;
 }
+

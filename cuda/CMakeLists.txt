@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(CudaMeshRenderer LANGUAGES CXX CUDA)
 
-# Set C++ and CUDA standards
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CUDA_STANDARD 11)
+set(CMAKE_BUILD_TYPE Debug) # Ensure debugging symbols are added
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CUDA_FLAGS_DEBUG "-G -g")  # Adds debug info for CUDA# Set C++ and CUDA standards
 
 # Find CUDA
 find_package(OpenCV REQUIRED)

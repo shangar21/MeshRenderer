@@ -4,11 +4,16 @@
 #include "Hit.h"
 #include "Mesh.h"
 #include "Ray.h"
+#include "BVH.h"
 #include <opencv2/opencv.hpp>
 
 class Renderer {
 public:
   void renderRayTrace(const Camera &camera, const Mesh &mesh,
+                      Eigen::MatrixXf &R, Eigen::MatrixXf &G,
+                      Eigen::MatrixXf &B);
+
+  void renderRayTrace(const Camera &camera, const BVH& bvh,
                       Eigen::MatrixXf &R, Eigen::MatrixXf &G,
                       Eigen::MatrixXf &B);
 
