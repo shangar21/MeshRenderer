@@ -30,5 +30,5 @@ public:
   void setBbox();
   bool checkIsLeaf() const;
   bool intersect(const Ray &ray, Hit &hit, float tMin, float tMax) const;
-	bool intersectsBbox(const Ray& ray, float tMin, float tMax) const;
+	bool intersectsBbox(const Ray& ray, float &tMin, float &tMax) const;
 };

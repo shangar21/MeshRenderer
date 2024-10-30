@@ -46,7 +46,7 @@ bool BVHNode::intersect(const Ray &ray, Hit &hit, float tMin,
   return intersect;
 }
 
-bool BVHNode::intersectsBbox(const Ray &ray, float tMin, float tMax) const {
+bool BVHNode::intersectsBbox(const Ray &ray, float &tMin, float &tMax) const {
   for (int i = 0; i < 3; i++) {
     float invD = 1.0f / ray.direction[i];
     float t0 = (bboxMin[i] - ray.origin[i]) * invD;

@@ -4,6 +4,7 @@ void BVH::buildFromMesh(const Mesh &mesh) {
   std::vector<Triangle> triangles = meshToTriangles(mesh);
   std::cout << "Converted mesh to triangle vec!\n";
   root = build(triangles, 0);
+  std::cout << "Created BVH from triangle vec!\n";
 }
 
 std::vector<Triangle> BVH::meshToTriangles(const Mesh &mesh) const {
@@ -39,7 +40,8 @@ std::vector<Triangle> BVH::meshToTriangles(const Mesh &mesh) const {
       Eigen::Vector3f nB = mesh.normals.row(normalIndices[1]);
       Eigen::Vector3f nC = mesh.normals.row(normalIndices[2]);
 
-      if (mesh.texcoords.size() > 0 && mesh.faceTexture.size() > i) {
+			// skip textures till I can get em to work
+      if (false && mesh.texcoords.size() > 0 && mesh.faceTexture.size() > i) {
         Eigen::Vector3i texIndices = mesh.faceTexture[i];
 
         // Check texture coordinate index bounds

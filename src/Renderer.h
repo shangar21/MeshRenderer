@@ -9,7 +9,11 @@
 
 class Renderer {
 public:
-  void renderRayTrace(const Camera &camera, const BVH &bvh,
+  void renderRayTrace(const Camera &camera, const Mesh &mesh,
+                      Eigen::MatrixXf &R, Eigen::MatrixXf &G,
+                      Eigen::MatrixXf &B);
+
+  void renderRayTrace(const Camera &camera, const BVH& bvh,
                       Eigen::MatrixXf &R, Eigen::MatrixXf &G,
                       Eigen::MatrixXf &B);
 

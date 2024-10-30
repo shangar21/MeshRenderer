@@ -7,39 +7,35 @@ bool Triangle::intersect(const Ray &ray, Hit &hit) const {
   Eigen::Vector3f h = ray.direction.cross(edge2);
   float det = edge1.dot(h);
 
-  if (fabs(det) < FP_TOLERANCE) {
-    return false; 
-  }
+  if (fabs(det) < FP_TOLERANCE) return false;
 
-  float inv_det = 1.0 / det;
+  float invDet = 1.0f / det;
+
   Eigen::Vector3f s = ray.origin - a;
-  float u = inv_det * s.dot(h);
 
-  if (u < 0.0 || u > 1.0) {
-    return false;
-  }
+  float u = invDet * s.dot(h);
+  if (u < 0.0f || u > 1.0f) return false;
 
   Eigen::Vector3f q = s.cross(edge1);
-  float v = inv_det * ray.direction.dot(q);
+  float v = invDet * ray.direction.dot(q);
+  if (v < 0.0f || (u + v) > 1.0f) return false;
 
-  if (v < 0.0 || u + v > 1.0) {
-    return false;
-  }
+  float lambda = invDet * edge2.dot(q);
+  if (lambda < FP_TOLERANCE) return false;
 
-  float t = inv_det * edge2.dot(q);
-
-  if (t > FP_TOLERANCE && t < hit.lambda) {
-    // Intersection detected, update hit information
+  if (lambda < hit.lambda) {
     hit.hit = true;
-    hit.lambda = t;
-    hit.point = ray.origin + t * ray.direction;
-    Eigen::Vector3f bary = getBarycentric(hit.point);
-    hit.normal = getBarycentricNormal(bary);
-    hit.colour = (hit.normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f)) / 2.0f;
-    return true;
+    hit.lambda = lambda;
+    hit.point = ray.pointAt(lambda);
+    hit.normal = edge1.cross(edge2).normalized();
+    // Need to set colour to something else later
+    // hit.colour =
+    //    Eigen::Vector3f(1.0f, 1.0f, 1.0f); // White color for now
+    hit.colour =
+        (hit.normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f)) / 2.0f;
+		return true;
   }
-
-  return false;
+	return false;
 }
 
 Eigen::Vector3f Triangle::getBarycentric(const Eigen::Vector3f &p) const {
