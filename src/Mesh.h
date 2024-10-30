@@ -5,7 +5,6 @@
 #include "Hit.h"
 #include "Ray.h"
 #include <Eigen/Dense>
-#include <cuda_runtime.h>
 #include <iostream>
 #include <string>
 #include <vector>

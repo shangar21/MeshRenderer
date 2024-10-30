@@ -31,10 +31,9 @@ bool Triangle::intersect(const Ray &ray, Hit &hit) const {
     hit.hit = true;
     hit.lambda = lambda;
     hit.point = ray.pointAt(lambda);
-    hit.normal = edge1.cross(edge2).normalized();
+		Eigen::Vector3f bary = getBarycentric(hit.point);
+		hit.normal = getBarycentricNormal(bary);
     // Need to set colour to something else later
-    // hit.colour =
-    //    Eigen::Vector3f(1.0f, 1.0f, 1.0f); // White color for now
     hit.colour = (hit.normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f)) / 2.0f;
     return true;
   }
