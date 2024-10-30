@@ -2,9 +2,7 @@
 
 void BVH::buildFromMesh(const Mesh &mesh) {
   std::vector<Triangle> triangles = meshToTriangles(mesh);
-  std::cout << "Converted mesh to triangle vec!\n";
   root = build(triangles, 0);
-  std::cout << "Created BVH from triangle vec!\n";
 }
 
 std::vector<Triangle> BVH::meshToTriangles(const Mesh &mesh) const {

@@ -17,7 +17,7 @@ class BVH {
 		int maxDepth;
 		int currentDepth;
 
-		BVH(int maxInLeaf=50) : maxInLeaf(maxInLeaf) {}
+		BVH(int maxInLeaf=10) : maxInLeaf(maxInLeaf) {}
 		void buildFromMesh(const Mesh& mesh);
 		std::shared_ptr<BVHNode> build(std::vector<Triangle>& triangles, int depth);
 		bool intersect(const Ray& ray, Hit& hit) const;
