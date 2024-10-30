@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BVH.h"
 #include "Camera.h"
 #include "Hit.h"
 #include "Mesh.h"
@@ -11,6 +12,9 @@ public:
   void renderRayTrace(const Camera &camera, const Mesh &mesh,
                       Eigen::MatrixXf &R, Eigen::MatrixXf &G,
                       Eigen::MatrixXf &B);
+
+  void renderRayTrace(const Camera &camera, const BVH &bvh, Eigen::MatrixXf &R,
+                      Eigen::MatrixXf &G, Eigen::MatrixXf &B);
 
   void renderRasterize(const Camera &camera, const Mesh &mesh,
                        Eigen::MatrixXf &R, Eigen::MatrixXf &G,

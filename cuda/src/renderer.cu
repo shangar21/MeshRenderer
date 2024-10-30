@@ -6,8 +6,12 @@
 __global__ void render_ray_trace(camera cam, mesh m, float *r, float *g,
                                  float *b, float vh, float vw, float3 du,
                                  float3 dv) {
-  int x = blockIdx.x * blockDim.x + threadIdx.x;
-  int y = blockIdx.y * blockDim.y + threadIdx.y;
+	int pixel_index = blockIdx.x * blockDim.x + threadIdx.x;
+	
+	int x = pixel_index % cam.image_width;
+	int y = pixel_index / cam.image_width;
+
+	//printf("x y: %d %d\n", x, y);
 
   if (x >= cam.image_width || y >= cam.image_height)
     return;
@@ -25,23 +29,12 @@ __global__ void render_ray_trace(camera cam, mesh m, float *r, float *g,
   float3 u_c = normalize(cross(cam.up, w_c));
   float3 v_c = cross(w_c, u_c);
 
-  float c2w[16];
-  c2w[0] = u_c.x;
-  c2w[1] = u_c.y;
-  c2w[2] = u_c.z;
-  c2w[3] = 0.0f;
-  c2w[4] = v_c.x;
-  c2w[5] = v_c.y;
-  c2w[6] = v_c.z;
-  c2w[7] = 0.0f;
-  c2w[8] = w_c.x;
-  c2w[9] = w_c.y;
-  c2w[10] = w_c.z;
-  c2w[11] = 0.0f;
-  c2w[12] = cam.eye.x;
-  c2w[13] = cam.eye.y;
-  c2w[14] = cam.eye.z;
-  c2w[15] = 1.0f;
+	float c2w[16] = {
+			u_c.x, v_c.x, w_c.x, cam.eye.x,
+			u_c.y, v_c.y, w_c.y, cam.eye.y,
+			u_c.z, v_c.z, w_c.z, cam.eye.z,
+			0.0f,  0.0f,  0.0f,  1.0f
+	};
 
   float4 ray_dir_world_homo = normalize(matMul4x4(c2w, ray_dir_cam_homo));
   float3 ray_dir_world = make_float3(ray_dir_world_homo.x, ray_dir_world_homo.y,
@@ -94,8 +87,6 @@ __global__ void render_ray_trace(camera cam, mesh m, float *r, float *g,
     }
   }
 
-  int pixel_index = y * cam.image_width + x;
-
   if (closest_hit.hit) {
     printf("Hit detected at pixel (%d, %d)\n", x, y);
     r[pixel_index] = closest_hit.colour.x;
@@ -110,11 +101,9 @@ __global__ void render_ray_trace(camera cam, mesh m, float *r, float *g,
 
 void launch_ray_trace_kernel(camera cam, mesh m, float *r, float *g, float *b,
                              float vh, float vw, float3 du, float3 dv) {
-  dim3 threadsPerBlock(16, 16);
-  dim3 blocksPerGrid(
-      (cam.image_width + threadsPerBlock.x - 1) / threadsPerBlock.x,
-      (cam.image_height + threadsPerBlock.y - 1) / threadsPerBlock.y);
-  render_ray_trace<<<blocksPerGrid, threadsPerBlock>>>(cam, m, r, g, b, vh, vw,
-                                                       du, dv);
+	int total_pixels = cam.image_width * cam.image_height;
+	int threadsPerBlock = 256;
+	int blocksPerGrid = (total_pixels + threadsPerBlock - 1) / threadsPerBlock;
+	render_ray_trace<<<blocksPerGrid, threadsPerBlock>>>(cam, m, r, g, b, vh, vw, du, dv);
   cudaDeviceSynchronize();
 }
