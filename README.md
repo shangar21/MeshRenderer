@@ -29,3 +29,8 @@ mkdir build/ && cd build/
 cmake ..
 make
 ```
+## Example image
+
+Image below is just normal map with barycentric interpolation
+
+![mesh_render](https://github.com/user-attachments/assets/e2f48e0e-e11f-4848-b90d-f0a35948dec7)
