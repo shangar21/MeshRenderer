@@ -32,7 +32,7 @@ bool Mesh::loadFromObj(const std::string &filename) {
   if (!attrib.normals.empty()) {
     size_t numNormals = attrib.normals.size() / 3;
     normals = Eigen::MatrixXf(numNormals, 3);
-    for (size_t i = 0; i < numVertices; i++) {
+    for (size_t i = 0; i < numNormals; i++) {
       normals(i, 0) = attrib.normals[3 * i];
       normals(i, 1) = attrib.normals[3 * i + 1];
       normals(i, 2) = attrib.normals[3 * i + 2];
@@ -40,12 +40,11 @@ bool Mesh::loadFromObj(const std::string &filename) {
   }
 
   if (!attrib.texcoords.empty()) {
-    size_t numNormals = attrib.texcoords.size() / 3;
-    texcoords = Eigen::MatrixXf(numNormals, 3);
-    for (size_t i = 0; i < numVertices; i++) {
-      texcoords(i, 0) = attrib.texcoords[3 * i];
-      texcoords(i, 1) = attrib.texcoords[3 * i + 1];
-      texcoords(i, 2) = attrib.texcoords[3 * i + 2];
+    size_t numTexCoords = attrib.texcoords.size() / 2;
+    texcoords = Eigen::MatrixXf(numTexCoords, 2);
+    for (size_t i = 0; i < numTexCoords; i++) {
+      texcoords(i, 0) = attrib.texcoords[2 * i];
+      texcoords(i, 1) = attrib.texcoords[2 * i + 1];
     }
   }
 

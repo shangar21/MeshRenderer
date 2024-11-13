@@ -9,6 +9,7 @@
 #include <limits>
 #include <memory>
 #include <vector>
+#include <opencv2/opencv.hpp>
 
 class BVH {
 public:
@@ -16,8 +17,10 @@ public:
   int maxInLeaf;
   int maxDepth;
   int currentDepth;
+	std::string uvMapPath;
 
   BVH(int maxInLeaf = 10) : maxInLeaf(maxInLeaf) {}
+  BVH(std::string texPath, int maxInLeaf = 10) : maxInLeaf(maxInLeaf), uvMapPath(texPath) {}
   void buildFromMesh(const Mesh &mesh);
   std::shared_ptr<BVHNode> build(std::vector<Triangle> &triangles, int depth);
   bool intersect(const Ray &ray, Hit &hit) const;
@@ -25,4 +28,5 @@ public:
 private:
   std::vector<Triangle> meshToTriangles(const Mesh &mesh) const;
   void sortTrianglesByAxis(std::vector<Triangle> &triangles, int axis);
+	void parseUVMap(std::vector<Triangle> &triangles) const;
 };

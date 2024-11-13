@@ -14,6 +14,8 @@ public:
   bool hasNormals = false;
   Eigen::Vector2f tA, tB, tC;
   bool hasTexCoords = false;
+  Eigen::Vector3f colA, colB, colC;
+	bool hasColours = false;
 
   Triangle(const Eigen::Vector3f &a, const Eigen::Vector3f &b,
            const Eigen::Vector3f &c)
@@ -36,6 +38,10 @@ public:
 
   bool intersect(const Ray &ray, Hit &hit) const;
   Eigen::Vector3f getBarycentric(const Eigen::Vector3f &point) const;
+
   Eigen::Vector3f
   getBarycentricNormal(const Eigen::Vector3f &barycentric) const;
+
+  Eigen::Vector3f
+  getBarycentricColour(const Eigen::Vector3f &barycentric) const;
 };

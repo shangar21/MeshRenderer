@@ -1,4 +1,5 @@
 #include "Triangle.h"
+#include <Eigen/Core>
 
 bool Triangle::intersect(const Ray &ray, Hit &hit) const {
   Eigen::Vector3f edge1 = b - a;
@@ -33,8 +34,7 @@ bool Triangle::intersect(const Ray &ray, Hit &hit) const {
     hit.point = ray.pointAt(lambda);
     Eigen::Vector3f bary = getBarycentric(hit.point);
     hit.normal = getBarycentricNormal(bary);
-    // Need to set colour to something else later
-    hit.colour = (hit.normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f)) / 2.0f;
+    hit.colour = getBarycentricColour(bary);
     return true;
   }
   return false;
@@ -68,4 +68,12 @@ Triangle::getBarycentricNormal(const Eigen::Vector3f &bary) const {
     Eigen::Vector3f edge2 = c - a;
     return edge1.cross(edge2).normalized();
   }
+}
+
+Eigen::Vector3f
+Triangle::getBarycentricColour(const Eigen::Vector3f &bary) const {
+	if(hasColours)
+		return bary.x() * colA + bary.y() * colB + bary.z() * colC;
+	else
+		return getBarycentricNormal(bary) + Eigen::Vector3f::Ones() / 2;
 }

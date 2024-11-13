@@ -5,6 +5,37 @@ void BVH::buildFromMesh(const Mesh &mesh) {
   root = build(triangles, 0);
 }
 
+void BVH::parseUVMap(std::vector<Triangle> &triangles) const{
+	cv::Mat texture = cv::imread(uvMapPath, cv::IMREAD_COLOR);
+	if(texture.empty())
+		throw std::runtime_error("Something wrong with texture, double check...");
+	
+	for(Triangle &triangle : triangles){
+		if(!triangle.hasTexCoords) continue;
+
+		Eigen::Vector3f texColours[3];
+		Eigen::Vector2f texCoords[3] = {triangle.tA, triangle.tB, triangle.tC};
+
+		for(int i = 0; i < 3; i++){
+			// convert uv to pixel coords
+			int x = (int)(texCoords[i].x() * (texture.cols - 1));
+			int y = (int)((1 - texCoords[i].y()) * (texture.rows - 1));
+
+			x = std::clamp(x, 0, texture.cols - 1);
+			y = std::clamp(y, 0, texture.rows - 1);
+
+			cv::Vec3b colour = texture.at<cv::Vec3b>(y, x);
+			texColours[i] = Eigen::Vector3f(colour[2], colour[1], colour[0]) / 255;
+		}
+
+		triangle.colA = texColours[0];
+		triangle.colB = texColours[1];
+		triangle.colC = texColours[2];
+		triangle.hasColours = true;
+	}
+
+}
+
 std::vector<Triangle> BVH::meshToTriangles(const Mesh &mesh) const {
   std::vector<Triangle> triangles;
 
@@ -39,7 +70,7 @@ std::vector<Triangle> BVH::meshToTriangles(const Mesh &mesh) const {
       Eigen::Vector3f nC = mesh.normals.row(normalIndices[2]);
 
       // skip textures till I can get em to work
-      if (false && mesh.texcoords.size() > 0 && mesh.faceTexture.size() > i) {
+      if (mesh.texcoords.size() > 0 && mesh.faceTexture.size() > i) {
         Eigen::Vector3i texIndices = mesh.faceTexture[i];
 
         // Check texture coordinate index bounds
@@ -63,6 +94,9 @@ std::vector<Triangle> BVH::meshToTriangles(const Mesh &mesh) const {
       triangles.push_back(Triangle(a, b, c));
     }
   }
+
+  if (!uvMapPath.empty())
+    parseUVMap(triangles);
 
   return triangles;
 }

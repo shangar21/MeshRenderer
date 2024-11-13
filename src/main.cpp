@@ -14,8 +14,9 @@ int main(int argc, char *argv[]) {
 
   std::string objPath = argv[1];
   std::string outPath = argv[2];
+	std::string texPath = argv[3];
 
-  Camera camera(Eigen::Vector3f(0.0f, 0.0f, 1.0f), // Camera position
+  Camera camera(Eigen::Vector3f(2.0f, 3.0f, 3.0f), // Camera position
                 Eigen::Vector3f(0.0f, 0.0f, 0.0f), // Target point
                 Eigen::Vector3f(0.0f, 1.0f, 0.0f), // Up vector
                 1.0f, 800, 600);
@@ -23,7 +24,7 @@ int main(int argc, char *argv[]) {
   bool loaded = mesh.loadFromObj(objPath);
   mesh.printMeshInfo();
 
-  BVH bvh;
+  BVH bvh(texPath);
   bvh.buildFromMesh(mesh);
 
   Eigen::MatrixXf R(camera.imageHeight, camera.imageWidth);

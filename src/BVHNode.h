@@ -17,6 +17,7 @@ public:
 
   std::vector<Triangle> triangles;
 
+
   BVHNode(const std::vector<Triangle> &triangles)
       : triangles(triangles), left(nullptr), right(nullptr) {
     setBbox();
