@@ -16,7 +16,7 @@ public:
   Eigen::Vector2f tA, tB, tC;
   bool hasTexCoords = false;
   Eigen::Vector3f colA, colB, colC;
-	bool hasColours = false;
+  bool hasColours = false;
 
   Triangle(const Eigen::Vector3f &a, const Eigen::Vector3f &b,
            const Eigen::Vector3f &c)
@@ -45,6 +45,6 @@ public:
 
   Eigen::Vector3f
   getBarycentricColour(const Eigen::Vector3f &barycentric) const;
-	
-	bool isPointInside(const Eigen::Vector3f& p) const;
+
+  bool isPointInside(const Eigen::Vector3f &p) const;
 };

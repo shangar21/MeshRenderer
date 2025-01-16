@@ -16,8 +16,8 @@ public:
   void renderRayTrace(const Camera &camera, const BVH &bvh, Eigen::MatrixXf &R,
                       Eigen::MatrixXf &G, Eigen::MatrixXf &B);
 
-  void rasterizeTriangle(const std::vector<Eigen::Vector3f>& projectedVertices,
-                         const Triangle& triangle, Eigen::MatrixXf &R,
+  void rasterizeTriangle(const std::vector<Eigen::Vector3f> &projectedVertices,
+                         const Triangle &triangle, Eigen::MatrixXf &R,
                          Eigen::MatrixXf &G, Eigen::MatrixXf &B);
 
   void renderRasterize(const Camera &camera, const Mesh &mesh,

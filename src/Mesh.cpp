@@ -152,35 +152,35 @@ Hit Mesh::intersect(const Ray &ray) const {
   return closestHit;
 }
 
-void Mesh::parseUVMap(std::vector<Triangle> &triangles) const{
-	cv::Mat texture = cv::imread(uvMapPath, cv::IMREAD_COLOR);
-	if(texture.empty())
-		throw std::runtime_error("Something wrong with texture, double check...");
-	
-	for(Triangle &triangle : triangles){
-		if(!triangle.hasTexCoords) continue;
+void Mesh::parseUVMap(std::vector<Triangle> &triangles) const {
+  cv::Mat texture = cv::imread(uvMapPath, cv::IMREAD_COLOR);
+  if (texture.empty())
+    throw std::runtime_error("Something wrong with texture, double check...");
 
-		Eigen::Vector3f texColours[3];
-		Eigen::Vector2f texCoords[3] = {triangle.tA, triangle.tB, triangle.tC};
+  for (Triangle &triangle : triangles) {
+    if (!triangle.hasTexCoords)
+      continue;
 
-		for(int i = 0; i < 3; i++){
-			// convert uv to pixel coords
-			int x = (int)(texCoords[i].x() * (texture.cols - 1));
-			int y = (int)((1 - texCoords[i].y()) * (texture.rows - 1));
+    Eigen::Vector3f texColours[3];
+    Eigen::Vector2f texCoords[3] = {triangle.tA, triangle.tB, triangle.tC};
 
-			x = std::clamp(x, 0, texture.cols - 1);
-			y = std::clamp(y, 0, texture.rows - 1);
+    for (int i = 0; i < 3; i++) {
+      // convert uv to pixel coords
+      int x = (int)(texCoords[i].x() * (texture.cols - 1));
+      int y = (int)((1 - texCoords[i].y()) * (texture.rows - 1));
 
-			cv::Vec3b colour = texture.at<cv::Vec3b>(y, x);
-			texColours[i] = Eigen::Vector3f(colour[2], colour[1], colour[0]) / 255;
-		}
+      x = std::clamp(x, 0, texture.cols - 1);
+      y = std::clamp(y, 0, texture.rows - 1);
 
-		triangle.colA = texColours[0];
-		triangle.colB = texColours[1];
-		triangle.colC = texColours[2];
-		triangle.hasColours = true;
-	}
+      cv::Vec3b colour = texture.at<cv::Vec3b>(y, x);
+      texColours[i] = Eigen::Vector3f(colour[2], colour[1], colour[0]) / 255;
+    }
 
+    triangle.colA = texColours[0];
+    triangle.colB = texColours[1];
+    triangle.colC = texColours[2];
+    triangle.hasColours = true;
+  }
 }
 
 std::vector<Triangle> Mesh::meshToTriangles() const {

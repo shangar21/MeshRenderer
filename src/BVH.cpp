@@ -5,15 +5,13 @@ void BVH::buildFromMesh(const Mesh &mesh) {
   root = build(triangles, 0);
 }
 
-
-
 std::shared_ptr<BVHNode> BVH::build(std::vector<Triangle> &triangles,
                                     int depth) {
   if (triangles.size() <= maxInLeaf) {
     return std::make_shared<BVHNode>(triangles);
   }
 
-	Mesh::sortTrianglesByAxis(triangles, depth % 3);
+  Mesh::sortTrianglesByAxis(triangles, depth % 3);
   int mid = triangles.size() / 2;
   std::vector<Triangle> leftSubset(triangles.begin(), triangles.begin() + mid);
   std::vector<Triangle> rightSubset(triangles.begin() + mid, triangles.end());
