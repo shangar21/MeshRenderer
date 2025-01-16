@@ -41,4 +41,4 @@ Image below is with texture mapping as well
 
 Image below is first iteration of rasterization (some math for the projections are wrong and need to be fixed)
 
-![mesh_render](https://github.com/user-attachments/assets/f179bdc8-8652-4f8e-9254-27bdd6609bbf)
+![image](https://github.com/user-attachments/assets/1e8b4772-86e7-4d26-82ad-721877c25492)
