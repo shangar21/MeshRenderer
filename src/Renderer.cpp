@@ -121,17 +121,17 @@ void Renderer::rasterizeTriangle(
       Eigen::Vector2f p(x + 0.5, y + 0.5);
       // Bary centric location of pixel center relative to triangle
       Eigen::Vector3f bary = computeBarycentric2D(p, v0, v1, v2);
-			// check inside tri
+      // check inside tri
       if (bary.x() < 0 || bary.y() < 0 || bary.z() < 0)
         continue;
 
-			// barycentric depth estimate
+      // barycentric depth estimate
       float depth = bary.dot(Eigen::Vector3f(v0.z(), v1.z(), v2.z()));
-			// check depth is ahead of other triangle
+      // check depth is ahead of other triangle
       if (depth > depthBuffer(x, y))
         continue;
 
-			// set depth map and pixel values
+      // set depth map and pixel values
       depthBuffer(x, y) = depth;
       R(x, y) = bary.dot(Eigen::Vector3f(triangle.colA.x(), triangle.colB.x(),
                                          triangle.colC.x()));
@@ -157,9 +157,9 @@ void Renderer::renderRasterize(const Camera &camera, const Mesh &mesh,
   B = Eigen::MatrixXf::Zero(camera.imageHeight, camera.imageWidth);
 
   for (const Triangle &triangle : mesh.meshToTriangles()) {
-		// Projection is buggy so triangleInView is not working well
-//    if (!camera.triangleInView(triangle))
-//      continue;
+    // Projection is buggy so triangleInView is not working well
+    //    if (!camera.triangleInView(triangle))
+    //      continue;
     std::vector<Eigen::Vector3f> projectedPoints =
         camera.projectTriangle(triangle);
     rasterizeTriangle(projectedPoints, triangle, R, G, B);
