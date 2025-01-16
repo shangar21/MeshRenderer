@@ -38,3 +38,7 @@ Image below is just normal map with barycentric interpolation
 Image below is with texture mapping as well
 
 ![mesh_render](https://github.com/user-attachments/assets/f47c26f3-3bdf-4314-b984-7c758cff3ed8)
+
+Image below is first iteration of rasterization (some math for the projections are wrong and need to be fixed)
+
+![mesh_render](https://github.com/user-attachments/assets/f179bdc8-8652-4f8e-9254-27bdd6609bbf)
