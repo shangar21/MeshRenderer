@@ -55,7 +55,6 @@ Camera::projectTriangle(const Triangle triangle) const {
   for (const Eigen::Vector3f vertex : triangleVertices) {
     Eigen::Vector4f vertexCamHomo =
         getProjMatrix() * getW2C() * vertex.homogeneous();
-		std::cout << vertexCamHomo.x() << " " << vertexCamHomo.y() << std::endl;
     Eigen::Vector3f vertexNDC = vertexCamHomo.hnormalized();
     float pixelX = ((vertexNDC.x() + 1.0f) / 2.0f) * imageWidth;
     float pixelY = (1.0f - ((vertexNDC.y() + 1.0f) / 2.0f)) * imageHeight;
