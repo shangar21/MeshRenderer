@@ -80,6 +80,92 @@ void Renderer::renderRayTrace(const Camera &camera, const BVH &bvh,
   }
 }
 
+Eigen::Vector3f computeBarycentric2D(const Eigen::Vector2f &p,
+                                     const Eigen::Vector3f &a,
+                                     const Eigen::Vector3f &b,
+                                     const Eigen::Vector3f &c) {
+  float det =
+      (b.y() - c.y()) * (a.x() - c.x()) + (c.x() - b.x()) * (a.y() - c.y());
+
+  float lambda0 =
+      ((b.y() - c.y()) * (p.x() - c.x()) + (c.x() - b.x()) * (p.y() - c.y())) /
+      det;
+  float lambda1 =
+      ((c.y() - a.y()) * (p.x() - c.x()) + (a.x() - c.x()) * (p.y() - c.y())) /
+      det;
+  float lambda2 = 1.0f - lambda0 - lambda1;
+
+  return Eigen::Vector3f(lambda0, lambda1, lambda2);
+}
+
+void Renderer::rasterizeTriangle(
+    const std::vector<Eigen::Vector3f> &projectedVertices,
+    const Triangle &triangle, Eigen::MatrixXf &R, Eigen::MatrixXf &G,
+    Eigen::MatrixXf &B) {
+  // Vertices (in pixel space)
+  Eigen::Vector3f v0 = projectedVertices[0];
+  Eigen::Vector3f v1 = projectedVertices[1];
+  Eigen::Vector3f v2 = projectedVertices[2];
+
+  // BBox (in pixel space)
+  int xmin = std::max(0, (int)std::floor(std::min({v0.x(), v1.x(), v2.x()})));
+  int xmax = std::min((int)R.cols() - 1,
+                      (int)std::ceil(std::max({v0.x(), v1.x(), v2.x()})));
+  int ymin = std::max(0, (int)std::floor(std::min({v0.y(), v1.y(), v2.y()})));
+  int ymax = std::min((int)R.rows() - 1,
+                      (int)std::ceil(std::max({v0.y(), v1.y(), v2.y()})));
+
+  for (int y = ymin; y < ymax; y++) {
+    for (int x = xmin; x < xmax; x++) {
+      // center of pixel
+      Eigen::Vector2f p(x + 0.5, y + 0.5);
+      // Bary centric location of pixel center relative to triangle
+      Eigen::Vector3f bary = computeBarycentric2D(p, v0, v1, v2);
+			// check inside tri
+      if (bary.x() < 0 || bary.y() < 0 || bary.z() < 0)
+        continue;
+
+			// barycentric depth estimate
+      float depth = bary.dot(Eigen::Vector3f(v0.z(), v1.z(), v2.z()));
+			// check depth is ahead of other triangle
+      if (depth > depthBuffer(x, y))
+        continue;
+
+			// set depth map and pixel values
+      depthBuffer(x, y) = depth;
+      R(x, y) = bary.dot(Eigen::Vector3f(triangle.colA.x(), triangle.colB.x(),
+                                         triangle.colC.x()));
+      G(x, y) = bary.dot(Eigen::Vector3f(triangle.colA.y(), triangle.colB.y(),
+                                         triangle.colC.y()));
+      B(x, y) = bary.dot(Eigen::Vector3f(triangle.colA.z(), triangle.colB.z(),
+                                         triangle.colC.z()));
+    }
+  }
+}
+
+void Renderer::renderRasterize(const Camera &camera, const Mesh &mesh,
+                               Eigen::MatrixXf &R, Eigen::MatrixXf &G,
+                               Eigen::MatrixXf &B) {
+
+  // Reset depth buffer
+  depthBuffer = Eigen::MatrixXf::Constant(camera.imageHeight, camera.imageWidth,
+                                          std::numeric_limits<float>::max());
+
+  // Reset frame buffer
+  R = Eigen::MatrixXf::Zero(camera.imageHeight, camera.imageWidth);
+  G = Eigen::MatrixXf::Zero(camera.imageHeight, camera.imageWidth);
+  B = Eigen::MatrixXf::Zero(camera.imageHeight, camera.imageWidth);
+
+  for (const Triangle &triangle : mesh.meshToTriangles()) {
+		// Projection is buggy so triangleInView is not working well
+//    if (!camera.triangleInView(triangle))
+//      continue;
+    std::vector<Eigen::Vector3f> projectedPoints =
+        camera.projectTriangle(triangle);
+    rasterizeTriangle(projectedPoints, triangle, R, G, B);
+  }
+}
+
 void Renderer::saveAsPNG(const Eigen::MatrixXf &R, const Eigen::MatrixXf &G,
                          const Eigen::MatrixXf B,
                          const std::string &filename) const {

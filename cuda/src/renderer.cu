@@ -88,7 +88,6 @@ __global__ void render_ray_trace(camera cam, mesh m, float *r, float *g,
   }
 
   if (closest_hit.hit) {
-    printf("Hit detected at pixel (%d, %d)\n", x, y);
     r[pixel_index] = closest_hit.colour.x;
     g[pixel_index] = closest_hit.colour.y;
     b[pixel_index] = closest_hit.colour.z;

@@ -16,10 +16,17 @@ public:
   void renderRayTrace(const Camera &camera, const BVH &bvh, Eigen::MatrixXf &R,
                       Eigen::MatrixXf &G, Eigen::MatrixXf &B);
 
+  void rasterizeTriangle(const std::vector<Eigen::Vector3f>& projectedVertices,
+                         const Triangle& triangle, Eigen::MatrixXf &R,
+                         Eigen::MatrixXf &G, Eigen::MatrixXf &B);
+
   void renderRasterize(const Camera &camera, const Mesh &mesh,
                        Eigen::MatrixXf &R, Eigen::MatrixXf &G,
                        Eigen::MatrixXf &B);
 
   void saveAsPNG(const Eigen::MatrixXf &R, const Eigen::MatrixXf &G,
                  const Eigen::MatrixXf B, const std::string &filename) const;
+
+private:
+  Eigen::MatrixXf depthBuffer;
 };

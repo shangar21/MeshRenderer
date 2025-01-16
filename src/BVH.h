@@ -26,7 +26,4 @@ public:
   bool intersect(const Ray &ray, Hit &hit) const;
 
 private:
-  std::vector<Triangle> meshToTriangles(const Mesh &mesh) const;
-  void sortTrianglesByAxis(std::vector<Triangle> &triangles, int axis);
-	void parseUVMap(std::vector<Triangle> &triangles) const;
 };

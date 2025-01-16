@@ -72,8 +72,14 @@ Triangle::getBarycentricNormal(const Eigen::Vector3f &bary) const {
 
 Eigen::Vector3f
 Triangle::getBarycentricColour(const Eigen::Vector3f &bary) const {
-	if(hasColours)
-		return bary.x() * colA + bary.y() * colB + bary.z() * colC;
-	else
-		return getBarycentricNormal(bary) + Eigen::Vector3f::Ones() / 2;
+  if (hasColours)
+    return bary.x() * colA + bary.y() * colB + bary.z() * colC;
+  else
+    return getBarycentricNormal(bary) + Eigen::Vector3f::Ones() / 2;
+}
+
+bool Triangle::isPointInside(const Eigen::Vector3f &p) const {
+  Eigen::Vector3f bary = getBarycentric(p);
+
+  return bary.x() >= 0 && bary.y() >= 0 && bary.z() >= 0;
 }

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Hit.h"
-#include "Mesh.h"
 #include "Ray.h"
 #include <Eigen/Dense>
 #include <memory>
 #include <vector>
+
+#define FP_TOLERANCE 1e-6
 
 class Triangle {
 public:
@@ -44,4 +45,6 @@ public:
 
   Eigen::Vector3f
   getBarycentricColour(const Eigen::Vector3f &barycentric) const;
+	
+	bool isPointInside(const Eigen::Vector3f& p) const;
 };
