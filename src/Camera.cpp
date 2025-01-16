@@ -3,9 +3,9 @@
 
 Camera::Camera(const Eigen::Vector3f &p, const Eigen::Vector3f &g,
                const Eigen::Vector3f &t, float fl, int imageWidth,
-               int imageHeight, float near, float far)
+               int imageHeight, float n, float f)
     : eye(p), target(g), up(t), fl(fl), imageWidth(imageWidth),
-      imageHeight(imageHeight) {
+      imageHeight(imageHeight), near(n), far(f){
   aspectRatio = (float)imageWidth / (float)imageHeight;
   fovx = 2.0f * std::atan((float)imageWidth / (2 * fl));
   fovy = 2.0f * std::atan((float)imageHeight / (2 * fl));

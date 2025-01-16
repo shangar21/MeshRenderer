@@ -157,9 +157,8 @@ void Renderer::renderRasterize(const Camera &camera, const Mesh &mesh,
   B = Eigen::MatrixXf::Zero(camera.imageHeight, camera.imageWidth);
 
   for (const Triangle &triangle : mesh.meshToTriangles()) {
-    // Projection is buggy so triangleInView is not working well
-    //    if (!camera.triangleInView(triangle))
-    //      continue;
+    if (!camera.triangleInView(triangle))
+      continue;
     std::vector<Eigen::Vector3f> projectedPoints =
         camera.projectTriangle(triangle);
     rasterizeTriangle(projectedPoints, triangle, R, G, B);
