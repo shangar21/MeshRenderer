@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "Renderer.h"
+#include <chrono>
 
 int main(int argc, char *argv[]) {
 
@@ -33,8 +34,18 @@ int main(int argc, char *argv[]) {
 
   Renderer renderer;
 
-  //renderer.renderRayTrace(camera, bvh, R, G, B);
+	auto begin = std::chrono::high_resolution_clock::now();
+  renderer.renderRayTrace(camera, bvh, R, G, B);
+	auto stop = std::chrono::high_resolution_clock::now();
+	auto rtDuration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - begin);
+	std::cout << "BVH RayTrace in ms: " << rtDuration.count() << std::endl;
+
+	auto start = std::chrono::high_resolution_clock::now();
   renderer.renderRasterize(camera, mesh, R, G, B);
+	auto end = std::chrono::high_resolution_clock::now();
+	auto rasterizeDuration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+	std::cout << "Rasterize in ms: " << rasterizeDuration.count() << std::endl;
+
   renderer.saveAsPNG(R, G, B, outPath);
   return 0;
 }

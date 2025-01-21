@@ -36,7 +36,7 @@ Eigen::Matrix4f Camera::getProjMatrix() const {
 
   Eigen::Matrix4f proj = Eigen::Matrix4f::Zero();
 
-  proj(0, 0) = 1.0f / tanFovX;
+  proj(0, 0) = (1.0f / tanFovX) / (aspectRatio);
   proj(1, 1) = 1.0f / tanFovY;
   proj(2, 2) = -(far + near) / (far - near);
   proj(2, 3) = -(2.0f * far * near) / (far - near);
@@ -44,6 +44,15 @@ Eigen::Matrix4f Camera::getProjMatrix() const {
 
   return proj;
 }
+
+//Eigen::Matrix4f Camera::getProjMatrix() const {
+//	Eigen::Matrix4f proj = Eigen::Matrix4f::Zero();
+//	proj(0, 0) = fl;
+//	proj(1, 1) = fl;
+//	proj(2, 2) = 1.0f;
+//	proj(3, 3) = 1.0f;
+//	return proj;
+//}
 
 std::vector<Eigen::Vector3f>
 Camera::projectTriangle(const Triangle triangle) const {
