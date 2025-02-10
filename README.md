@@ -1,6 +1,6 @@
 # MeshRenderer
 
-A simple ray tracing (rasterizing in the future) application that loads and renders 3D meshes from .obj files. Can use the headers and other CPP files for your own applications, but to quickly render can build and pass in an obj path and output path to render and save as a png.
+A simple ray tracing and rasterizing application that loads and renders 3D meshes from .obj files. Can use the headers and other CPP files for your own applications, but to quickly render can build and pass in an obj path and output path to render and save as a png.
 
 ## Dependencies
 - Eigen
