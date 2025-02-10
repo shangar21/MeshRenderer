@@ -8,12 +8,9 @@ A simple ray tracing (rasterizing in the future) application that loads and rend
 - OpenCV
 
 ## TODO
-1. Read Textures
-2. Radiance model
-3. BVH
-4. Animation
-5. Rasterization
-6. CUDA
+1. Radiance model
+2. Animation
+3. CUDA
 
 ## How to Build
 
