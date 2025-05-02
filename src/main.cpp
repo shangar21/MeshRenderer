@@ -2,6 +2,8 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "Renderer.h"
+#include "CudaTriangle.cuh"
+#include "CudaCamera.cuh"
 #include <chrono>
 
 int main(int argc, char *argv[]) {
@@ -47,5 +49,15 @@ int main(int argc, char *argv[]) {
 	std::cout << "Rasterize in ms: " << rasterizeDuration.count() << std::endl;
 
   renderer.saveAsPNG(R, G, B, outPath);
+
+	std::cout << "testing cuda triangle struct conversion..." << std::endl;
+	std::vector<Triangle> triangles = mesh.meshToTriangles();
+	CudaTriangle* cudaTriangles = triangleToCudaTriangle(triangles);
+	freeCudaTriangles(cudaTriangles);	
+	
+	std::cout << "testing cuda camera struct conversion..." << std::endl;
+	CudaCamera* cudaCam = cameraToCudaCamera(camera);
+	freeCudaCamera(cudaCam);	
+	
   return 0;
 }
