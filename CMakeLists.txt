@@ -29,6 +29,7 @@ set(SOURCES
     src/Triangle.cpp
 		cuda/src/CudaTriangle.cu
 		cuda/src/CudaCamera.cu
+		cuda/src/Project.cu
 )
 
 add_library(MeshRendererLib ${SOURCES})

@@ -67,7 +67,7 @@ Camera::projectTriangle(const Triangle triangle) const {
     Eigen::Vector3f vertexNDC = vertexCamHomo.hnormalized();
     float pixelX = ((vertexNDC.x() + 1.0f) / 2.0f) * imageWidth;
     float pixelY = (1.0f - ((vertexNDC.y() + 1.0f) / 2.0f)) * imageHeight;
-    float pixelZ = vertexNDC.z();
+    float pixelZ = vertexCamHomo.z() / vertexCamHomo.w();
     projectedVertices.emplace_back(pixelX, pixelY, pixelZ);
   }
 
