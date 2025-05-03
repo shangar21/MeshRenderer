@@ -115,8 +115,8 @@ void Renderer::rasterizeTriangle(
   int ymax = std::min((int)R.rows() - 1,
                       (int)std::ceil(std::max({v0.y(), v1.y(), v2.y()})));
 
-  for (int y = ymin; y < ymax; y++) {
-    for (int x = xmin; x < xmax; x++) {
+  for (int y = ymin; y <= ymax; y++) {
+    for (int x = xmin; x <= xmax; x++) {
       // center of pixel
       Eigen::Vector2f p(x + 0.5, y + 0.5);
       // Bary centric location of pixel center relative to triangle
@@ -128,16 +128,16 @@ void Renderer::rasterizeTriangle(
       // barycentric depth estimate
       float depth = bary.dot(Eigen::Vector3f(v0.z(), v1.z(), v2.z()));
       // check depth is ahead of other triangle
-      if (depth > depthBuffer(x, y))
+      if (depth > depthBuffer(y, x))
         continue;
 
       // set depth map and pixel values
-      depthBuffer(x, y) = depth;
-      R(x, y) = bary.dot(Eigen::Vector3f(triangle.colA.x(), triangle.colB.x(),
+      depthBuffer(y, x) = depth;
+      R(y, x) = bary.dot(Eigen::Vector3f(triangle.colA.x(), triangle.colB.x(),
                                          triangle.colC.x()));
-      G(x, y) = bary.dot(Eigen::Vector3f(triangle.colA.y(), triangle.colB.y(),
+      G(y, x) = bary.dot(Eigen::Vector3f(triangle.colA.y(), triangle.colB.y(),
                                          triangle.colC.y()));
-      B(x, y) = bary.dot(Eigen::Vector3f(triangle.colA.z(), triangle.colB.z(),
+      B(y, x) = bary.dot(Eigen::Vector3f(triangle.colA.z(), triangle.colB.z(),
                                          triangle.colC.z()));
     }
   }
