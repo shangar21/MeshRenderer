@@ -105,7 +105,7 @@ void rasterizeTriangles(CudaTriangle *cudaTriangles, CudaCamera *cam, size_t n,
   cudaMemset(g, 0, sizeof(float) * totalPixels);
   cudaMemset(b, 0, sizeof(float) * totalPixels);
 
-	// Depth needs to be initialzied at infinity 
+  // Depth needs to be initialzied at infinity
   std::vector<float> initDepth(totalPixels,
                                std::numeric_limits<float>::infinity());
   cudaMemcpy(d, initDepth.data(), sizeof(float) * totalPixels,
@@ -147,8 +147,8 @@ void rasterizeTriangles(CudaTriangle *cudaTriangles, CudaCamera *cam, size_t n,
       Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
       mappedD(hd.data(), rows, cols);
 
-  R = mappedR;
-  G = mappedG;
-  B = mappedB;
-  depthMap = mappedD;
+  R = mappedR.colwise().reverse().eval();
+  G = mappedG.colwise().reverse().eval();
+  B = mappedB.colwise().reverse().eval();
+  depthMap = mappedD.colwise().reverse().eval();
 }
