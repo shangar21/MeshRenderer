@@ -10,4 +10,4 @@ __global__ void projectTrianglesKernel(CudaTriangle *cudaTriangles,
                                        CudaCamera *cam, size_t n);
 
 void projectTriangles(CudaTriangle *cudaTriangles, CudaCamera *cudaCam,
-                       size_t n);
+                      size_t n);

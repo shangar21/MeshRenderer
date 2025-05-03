@@ -2,13 +2,13 @@
 #include <iostream>
 
 Camera::Camera(const Eigen::Vector3f &p, const Eigen::Vector3f &g,
-               const Eigen::Vector3f &t, float fl, int imageWidth,
-               int imageHeight, float n, float f)
-    : eye(p), target(g), up(t), fl(fl), imageWidth(imageWidth),
-      imageHeight(imageHeight), near(n), far(f){
+               const Eigen::Vector3f &t, float focal, int iw, int ih, float n,
+               float f)
+    : eye(p), target(g), up(t), fl(focal), imageWidth(iw), imageHeight(ih),
+      near(n), far(f) {
   aspectRatio = (float)imageWidth / (float)imageHeight;
-  fovx = 2.0f * std::atan((float)imageWidth / (2 * fl));
-  fovy = 2.0f * std::atan((float)imageHeight / (2 * fl));
+  fovx = 2.0f * std::atan((float)iw / (2 * focal));
+  fovy = 2.0f * std::atan((float)ih / (2 * focal));
 }
 
 Eigen::Matrix4f Camera::getC2W() const {
@@ -45,15 +45,6 @@ Eigen::Matrix4f Camera::getProjMatrix() const {
   return proj;
 }
 
-//Eigen::Matrix4f Camera::getProjMatrix() const {
-//	Eigen::Matrix4f proj = Eigen::Matrix4f::Zero();
-//	proj(0, 0) = fl;
-//	proj(1, 1) = fl;
-//	proj(2, 2) = 1.0f;
-//	proj(3, 3) = 1.0f;
-//	return proj;
-//}
-
 std::vector<Eigen::Vector3f>
 Camera::projectTriangle(const Triangle triangle) const {
   std::vector<Eigen::Vector3f> projectedVertices;
@@ -67,7 +58,7 @@ Camera::projectTriangle(const Triangle triangle) const {
     Eigen::Vector3f vertexNDC = vertexCamHomo.hnormalized();
     float pixelX = ((vertexNDC.x() + 1.0f) / 2.0f) * imageWidth;
     float pixelY = (1.0f - ((vertexNDC.y() + 1.0f) / 2.0f)) * imageHeight;
-    float pixelZ = vertexCamHomo.z() / vertexCamHomo.w();
+    float pixelZ = vertexNDC.z();
     projectedVertices.emplace_back(pixelX, pixelY, pixelZ);
   }
 

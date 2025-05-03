@@ -30,12 +30,14 @@ __global__ void projectTrianglesKernel(CudaTriangle *cudaTriangles,
   cudaTriangles[idx].projC =
       make_float3(cam->imageWidth * ((c.x + 1.0f) / 2.0f),
                   cam->imageHeight * ((c.y + 1.0f) / 2.0f), c.z);
+
+  cudaTriangles[idx].isProjected = true;
 }
 
 void projectTriangles(CudaTriangle *cudaTriangles, CudaCamera *cudaCam,
                       size_t n) {
   const int threadsPerBlock = 256;
-  int blocks = ceil(n / threadsPerBlock);
+  int blocks = (n + threadsPerBlock - 1) / threadsPerBlock;
 
   // Assume that the cudaTriangles pointer is a cudaMalloc pointer
   // Assume that cudaCam pointer is a cudaMalloc pointer
